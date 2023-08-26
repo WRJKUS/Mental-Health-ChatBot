@@ -2,7 +2,7 @@ import streamlit as st
 from streamlit_chat import message
 import llama
 
-
+count = 1
 def clear_chat():
     st.session_state.messages = [{"role": "assistant", "content": "Say something to get started!"}]
 
@@ -19,9 +19,10 @@ with st.form("chat_input", clear_on_submit=True):
         label="Your message:",
         placeholder="Type something...",
         label_visibility="collapsed",
+        key=count
     )
-
-    b.form_submit_button("Send", use_container_width=True)
+    count+=1
+    b.form_submit_button("Send", use_container_width=True )
 
 for msg in st.session_state.messages:
     message(msg["content"], is_user=msg["role"] == "user")
