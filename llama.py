@@ -5,7 +5,7 @@
 ######################################################################################################
 
 # Your PAT (Personal Access Token) can be found in the portal under Authentification
-PAT = '0e48731ea593467c9c7198f4fdd750ad'
+PAT = '742003fc4ac94db88c8f633bed5da409'
 # Specify the correct user_id/app_id pairings
 # Since you're making inferences outside your app's scope
 USER_ID = 'k1553839'
@@ -61,4 +61,4 @@ for output in results.outputs:
         print("	%s %.2f" % (concept.name, concept.value))
 
 # Uncomment this line to print the full Response JSON
-#print(results)
+print(results)
