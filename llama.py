@@ -12,7 +12,7 @@ USER_ID = 'k1553839'
 APP_ID = 'mental-health'
 # Change these to whatever model and text URL you want to use
 WORKFLOW_ID = 'llama2-70b-chat-workflow-6zpie'
-TEXT_FILE_URL = 'https://samples.clarifai.com/negative_sentence_12.txt'
+
 
 ############################################################################
 # YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
@@ -29,6 +29,7 @@ metadata = (('authorization', 'Key ' + PAT),)
 
 userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
 def get_response( user_prompt):
+    RAW_TEXT = user_prompt
     post_workflow_results_response = stub.PostWorkflowResults(
         service_pb2.PostWorkflowResultsRequest(
             user_app_id=userDataObject,
@@ -37,7 +38,7 @@ def get_response( user_prompt):
                 resources_pb2.Input(
                     data=resources_pb2.Data(
                         text=resources_pb2.Text(
-                            raw=user_prompt
+                            raw=RAW_TEXT
                         )
                     )
                 )
@@ -45,21 +46,10 @@ def get_response( user_prompt):
         ),
         metadata=metadata
     )
+    #print(post_workflow_results_response)
     if post_workflow_results_response.status.code != status_code_pb2.SUCCESS:
         print(post_workflow_results_response.status)
         raise Exception("Post workflow results failed, status: " + post_workflow_results_response.status.description)
-    results = post_workflow_results_response.results[0]
-    return results
-# We'll get one WorkflowResult for each input we used above. Because of one input, we have here one WorkflowResult
+    result = post_workflow_results_response.results[0].outputs[0].data.text.raw
+    return result
 
-
-# Each model we have in the workflow will produce one output.
-# ##for output in results.outputs:
-#    model = output.model
-
-#    print("Predicted concepts for the model `%s`" % model.id)
-#   for concept in output.data.concepts:
-#        print("	%s %.2f" % (concept.name, concept.value))
-
-# Uncomment this line to print the full Response JSON
-#print(results)
