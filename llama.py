@@ -61,4 +61,4 @@ for output in results.outputs:
         print("	%s %.2f" % (concept.name, concept.value))
 
 # Uncomment this line to print the full Response JSON
-print(results)
+# print(results)
