@@ -18,10 +18,9 @@ with st.form("chat_input", clear_on_submit=True):
     user_prompt = a.text_input(
         label="Your message:",
         placeholder="Type something...",
-        label_visibility="collapsed",
-        key=count
+        label_visibility="collapsed"
     )
-    count+=1
+
     b.form_submit_button("Send", use_container_width=True )
 
 for msg in st.session_state.messages:
@@ -32,8 +31,8 @@ if user_prompt:
 
     st.session_state.messages.append({"role": "user", "content": user_prompt})
 
-    message(user_prompt, is_user=True)
-
+    message(user_prompt, is_user=True,key=count)
+    count+=1
     response = llama.get_response(
         user_prompt)  # get response from llama2 API (in our case from Workflow we created before)
 
