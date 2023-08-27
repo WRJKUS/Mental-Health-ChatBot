@@ -27,7 +27,7 @@ for msg in st.session_state.messages:
     message(msg["content"], is_user=msg["role"] == "user",key=count)
     count += 1
 if user_prompt:
-    print('user_prompt: ', user_prompt)
+    #print('user_prompt: ', user_prompt)
 
     st.session_state.messages.append({"role": "user", "content": user_prompt})
 
@@ -38,11 +38,11 @@ if user_prompt:
 
     msg = {"role": "assistant", "content": response}
 
-    print('st.session_state.messages: ', st.session_state.messages)
+    #print('st.session_state.messages: ', st.session_state.messages)
 
     st.session_state.messages.append(msg)
 
-    print('msg.content: ', msg["content"])
+    #print('msg.content: ', msg["content"])
 
     message(msg["content"])
 

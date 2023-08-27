@@ -60,7 +60,7 @@ def get_response( user_prompt):
     if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
         print(post_model_outputs_response.status)
         raise Exception(f"Post model outputs failed, status: {post_model_outputs_response.status.description}")
-    print(post_model_outputs_response)
+    # print(post_model_outputs_response)
     result = post_model_outputs_response.outputs[0].data.text.raw
     return result
 
