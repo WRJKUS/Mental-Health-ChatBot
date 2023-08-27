@@ -1,39 +1,50 @@
-
+from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
+from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
+from clarifai_grpc.grpc.api.status import status_code_pb2
+import os
 ######################################################################################################
 # In this section, we set the user authentication, user and app ID, model details, and the URL of
 # the text we want as an input. Change these strings to run your own example.
 ######################################################################################################
 
 # Your PAT (Personal Access Token) can be found in the portal under Authentification
-PAT = '7e1f87e8124440a18a314fa85acaf926'
+
+PAT = os.getenv('PAT')
 # Specify the correct user_id/app_id pairings
 # Since you're making inferences outside your app's scope
-USER_ID = 'k1553839'
-APP_ID = 'mental-health'
-# Change these to whatever model and text URL you want to use
-WORKFLOW_ID = 'llama2-70b-chat-workflow-6zpie'
 
+# Change these to whatever model and text URL you want to use
+
+USER_ID = 'meta'
+APP_ID = 'Llama-2'
+# Change these to whatever model and text URL you want to use
+MODEL_ID = 'llama2-7b-chat'
 
 ############################################################################
 # YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
 ############################################################################
 
-from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
-from clarifai_grpc.grpc.api import resources_pb2, service_pb2, service_pb2_grpc
-from clarifai_grpc.grpc.api.status import status_code_pb2
+
 
 channel = ClarifaiChannel.get_grpc_channel()
 stub = service_pb2_grpc.V2Stub(channel)
 
 metadata = (('authorization', 'Key ' + PAT),)
-
+template = """<s>[INST] <<SYS>> You are a virtual psychologist trained in Cognitive Behavioral Therapy (CBT) principles. 
+Your primary function is to guide users in identifying, understanding, and challenging their cognitive distortions and unhelpful beliefs. 
+Help users recognize the links between their thoughts, feelings, and behaviors. Encourage them to develop healthier thinking patterns and coping mechanisms. 
+Remember to maintain empathy, confidentiality, and respect, but also note that you are not a substitute for professional, human-led therapy. 
+Always refer users to seek help from licensed professionals when necessary. Keep the answers short and simple. <</SYS>>
+Patient: {patient} [/INST]"""
 userDataObject = resources_pb2.UserAppIDSet(user_id=USER_ID, app_id=APP_ID)
 def get_response( user_prompt):
-    RAW_TEXT = user_prompt
-    post_workflow_results_response = stub.PostWorkflowResults(
-        service_pb2.PostWorkflowResultsRequest(
+    RAW_TEXT = template.format(patient=user_prompt)
+    post_model_outputs_response = stub.PostModelOutputs(
+        service_pb2.PostModelOutputsRequest(
             user_app_id=userDataObject,
-            workflow_id=WORKFLOW_ID,
+            # The userDataObject is created in the overview and is required when using a PAT
+            model_id=MODEL_ID,
+            # version_id=MODEL_VERSION_ID,  # This is optional. Defaults to the latest model version
             inputs=[
                 resources_pb2.Input(
                     data=resources_pb2.Data(
@@ -46,10 +57,10 @@ def get_response( user_prompt):
         ),
         metadata=metadata
     )
-    #print(post_workflow_results_response)
-    if post_workflow_results_response.status.code != status_code_pb2.SUCCESS:
-        print(post_workflow_results_response.status)
-        raise Exception("Post workflow results failed, status: " + post_workflow_results_response.status.description)
-    result = post_workflow_results_response.results[0].outputs[0].data.text.raw
+    if post_model_outputs_response.status.code != status_code_pb2.SUCCESS:
+        print(post_model_outputs_response.status)
+        raise Exception(f"Post model outputs failed, status: {post_model_outputs_response.status.description}")
+    print(post_model_outputs_response)
+    result = post_model_outputs_response.outputs[0].data.text.raw
     return result
 

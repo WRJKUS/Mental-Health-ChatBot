@@ -7,7 +7,7 @@ def clear_chat():
     st.session_state.messages = [{"role": "assistant", "content": "Say something to get started!"}]
 
 
-st.title("Llama2 Clarifai Tutorial")
+st.title("Virtual Psychologist")
 
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Say something to get started!"}]
@@ -24,8 +24,8 @@ with st.form("chat_input", clear_on_submit=True):
     b.form_submit_button("Send", use_container_width=True )
 
 for msg in st.session_state.messages:
-    message(msg["content"], is_user=msg["role"] == "user")
-
+    message(msg["content"], is_user=msg["role"] == "user",key=count)
+    count += 1
 if user_prompt:
     print('user_prompt: ', user_prompt)
 
